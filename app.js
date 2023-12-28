@@ -1,5 +1,18 @@
-var mysql = require('mysql2'); 
-var fs = require('node:fs');
+const mysql = require('mysql2');
+
+const fs = require('node:fs');
+
+const express = require('express');
+const expressApp = express();
+const port = 3000;
+
+expressApp.get('/', (req, res) => {
+    res.send('Hello!');
+});
+
+expressApp.listen(port, () => {
+    console.log('Server running on ' + port);
+});
 
 console.log('Connecting...');
 
@@ -46,4 +59,6 @@ connection.connect((error) => {
     });
 
     console.log('Connection successful!');
+
+    connection.end();
 });
