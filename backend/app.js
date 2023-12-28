@@ -4,7 +4,7 @@ const fs = require('node:fs');
 
 const express = require('express');
 const expressApp = express();
-const port = 3000;
+const port = 3001;
 
 expressApp.get('/', (req, res) => {
     res.send('Hello!');
