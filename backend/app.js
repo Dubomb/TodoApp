@@ -15,11 +15,11 @@ expressApp.get('/status', (req, res) => {
     res.json({message: 'The server is ready.'});
 });
 
-expressApp.get('/api/gettasks', (req, res) => {
+expressApp.get('/api/tasks', (req, res) => {
     connection.query('select * from task', (err, results) => {
         if (err) { 
             res.status(500).json({success: false, message: 'Failed to retrieve database information.'});
-            console.log('Failed to retrieve database information.');
+            console.log('Error: ' + err.message);
             return;
         }
         
@@ -27,29 +27,20 @@ expressApp.get('/api/gettasks', (req, res) => {
     });
 });
 
-expressApp.get('/test', (req, res) => {
-    let r = 'what';
-
-    connection.query('select name from status', (err, results) => {
+expressApp.post('/api/tasks', (req, res) => {
+    const query = 'insert into task (task_ID, title, description, due_date, status_ID) values (?, ?, ?, ?, ?)'
+    const data = req.body;
+    const params = [data.task_ID, data.title, data.description, data.due_date, data.status_ID];
+    
+    connection.query(query, params, (err) => {
         if (err) {
-            res.status(500).json({success: false, message: 'Database failed to fetch information'});
+            console.log('Error: ' + err.message);
+            res.status(500).json({success: false, message: 'Failed to insert data into database.'});
             return;
         }
 
-        res.json({message: results});
+        res.json({success: true, message: 'Successfully inserted data into database.'});
     });
-});
-
-expressApp.post('/number', (req, res) => {
-    const query = 'insert into test (a) values (?)';
-    connection.query(query, [req.body.a], (err, results) => {
-        if (err) {
-            res.json({message: 'Error: ' + err.message});
-            return;
-        }
-
-        res.json({message: 'Successfully inserted data into database'});
-    })
 });
 
 expressApp.listen(port, () => {
