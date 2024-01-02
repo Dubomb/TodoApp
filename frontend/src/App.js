@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 
+import Header from './Components/Interface/header.js'
+
 async function testConnection() {
   try {
     const response = await fetch('http://localhost:3001/status');
@@ -43,7 +45,7 @@ function App() {
 
   return (
     <div>
-      <p>Success!</p>
+      <Header/>
     </div>
   );
 }
