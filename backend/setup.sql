@@ -30,24 +30,16 @@ CREATE TABLE task (
   `task_ID` int unsigned NOT NULL,
   `title` varchar(32) NOT NULL,
   `description` tinytext,
-  `creation_date` datetime(3) NOT NULL,
   `due_date` datetime(3) NOT NULL,
   `status_ID` int unsigned NOT NULL,
+  `category_ID` int unsigned NOT NULL,
   PRIMARY KEY (`task_ID`),
   UNIQUE KEY `task_ID_UNIQUE` (`task_ID`),
   KEY `status_ID_idx` (`status_ID`),
+  KEY `category_ID_idx` (`category_ID`),
+  CONSTRAINT `category_ID` FOREIGN KEY (`category_ID`) REFERENCES `category` (`category_ID`),
   CONSTRAINT `status_ID` FOREIGN KEY (`status_ID`) REFERENCES `status` (`status_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE task_category (
-  `task_ID` int unsigned NOT NULL,
-  `category_ID` int unsigned NOT NULL,
-  PRIMARY KEY (`task_ID`,`category_ID`),
-  UNIQUE KEY `task_ID_UNIQUE` (`task_ID`),
-  UNIQUE KEY `category_ID_UNIQUE` (`category_ID`),
-  CONSTRAINT `task_category_category_ID` FOREIGN KEY (`category_ID`) REFERENCES `category` (`category_ID`),
-  CONSTRAINT `task_category_task_ID` FOREIGN KEY (`task_ID`) REFERENCES `task` (`task_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE task_day (
   `task_ID` int unsigned NOT NULL,
