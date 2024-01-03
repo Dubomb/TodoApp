@@ -16,7 +16,7 @@ module.exports = function(expressApp) {
     });
 
     expressApp.post('api/categories', (req, res) => {
-        const query = 'insert into category (category_ID, name) values (?, ?)';
+        const query = 'insert into category (category_ID, name, color) values (?, ?, ?)';
         const data = req.body;
         const params = [data.category_ID, data.name];
         
@@ -33,7 +33,7 @@ module.exports = function(expressApp) {
     });
 
     expressApp.put('api/categories', (req, res) => {
-        const query = 'update category set name = ? where category_ID = ?';
+        const query = 'update category set name = ?, color = ? where category_ID = ?';
         const data = req.body;
         const params = [data.name, data.category_ID];
 

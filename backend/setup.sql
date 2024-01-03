@@ -1,10 +1,11 @@
 CREATE TABLE category (
-  category_ID int unsigned NOT NULL,
-  name varchar(16) NOT NULL,
+  `category_ID` int unsigned NOT NULL,
+  `name` varchar(16) NOT NULL,
+  `color` char(7) NOT NULL,
   PRIMARY KEY (`category_ID`),
   UNIQUE KEY `Category_ID_UNIQUE` (`category_ID`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE day (
   day_ID int unsigned NOT NULL,
