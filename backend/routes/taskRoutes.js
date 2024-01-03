@@ -1,7 +1,5 @@
 module.exports = function(expressApp) {
 
-    const connection = expressApp.get('connection');
-
     expressApp.get('/api/tasks', (req, res) => {
         const connection = expressApp.get('connection');
         connection.query('select * from task', (err, results) => {

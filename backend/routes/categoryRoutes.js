@@ -1,8 +1,6 @@
 module.exports = function(expressApp) {
 
-    const connection = expressApp.get('connection');
-
-    expressApp.get('api/categories', (req, res) => {
+    expressApp.get('/api/categories', (req, res) => {
         const connection = expressApp.get('connection');
         connection.query('select * from category', (err, results) => {
             if (err) { 
@@ -15,7 +13,7 @@ module.exports = function(expressApp) {
         });
     });
 
-    expressApp.post('api/categories', (req, res) => {
+    expressApp.post('/api/categories', (req, res) => {
         const query = 'insert into category (category_ID, name, color) values (?, ?, ?)';
         const data = req.body;
         const params = [data.category_ID, data.name];
@@ -32,7 +30,7 @@ module.exports = function(expressApp) {
         });
     });
 
-    expressApp.put('api/categories', (req, res) => {
+    expressApp.put('/api/categories', (req, res) => {
         const query = 'update category set name = ?, color = ? where category_ID = ?';
         const data = req.body;
         const params = [data.name, data.category_ID];
@@ -49,7 +47,7 @@ module.exports = function(expressApp) {
         });
     });
 
-    expressApp.delete('api/categories', (req, res) => {
+    expressApp.delete('/api/categories', (req, res) => {
         const query = 'delete from task where category_ID = ?';
         const data = req.body;
         const params = [data.category_ID];
