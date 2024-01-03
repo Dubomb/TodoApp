@@ -1,6 +1,10 @@
-function TaskItem() {
+function TaskItem({t}) {
     return (
-        <p>Task</p>
+        <div>
+            <h3>{t.title}</h3>
+            <p>{t.description}</p>
+            <p>Due: {t.due_date}</p>
+        </div>
     );
 }
 
