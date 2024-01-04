@@ -80,7 +80,7 @@ function TaskList() {
 
     return (
         <div>
-            <div className='tasklist-container'>
+            <div className='tasklist-menu-container'>
                 <h2>Tasks:</h2>
                 <div>
                     <p>Create new:</p>
@@ -95,7 +95,9 @@ function TaskList() {
                     <button className='tasklist-menu-button'>Incomplete</button>
                 </div>
             </div>
-            {taskComponents}
+            <div className='tasklist-items-container'>
+                {taskComponents}
+            </div>
         </div>
     );
 }

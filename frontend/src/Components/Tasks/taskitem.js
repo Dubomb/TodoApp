@@ -1,9 +1,12 @@
 function TaskItem({t, c}) {
+    const rectStyle = {
+        '--accent-color': c.color
+    };
+
     return (
-        <div>
+        <div className='task-container' style={rectStyle}>
             <h3>{t.title}</h3>
             <p>{t.description}</p>
-            <p>Due: {t.due_date}</p>
             <p>Category: {c.name}</p>
         </div>
     );
