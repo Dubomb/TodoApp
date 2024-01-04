@@ -36,20 +36,27 @@ async function getCategories() {
     }
 }
 
+function compareDueDate(a, b) {
+    return new Date(b.due_date) - new Date(a.due_date);
+}
+
+function compareCategory(a, b) {
+    return a.category_ID - b.category_ID;
+}
+
+function compareComplete(a, b) {
+    return a.status_ID - b.status_ID;
+}
+
 function TaskList() {
     const [tasksStatus, setTasksStatus] = useState(false);
     const [categoriesStatus, setCategoriesStatus] = useState(false);
-    const [tasks, setTasks] = useState(new Map());
+    const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState(new Map());
 
     useEffect(() => {
         getTasks().then(result => {
-            let m = new Map();
-            for (const item of result) {
-                const {task_ID, ...val} = item;
-                m.set(task_ID, val);
-            }
-            setTasks(m);
+            setTasks(result);
             setTasksStatus(true);
         });
     }, []);
@@ -71,12 +78,15 @@ function TaskList() {
             <p>Loading task data...</p>
         );
     }
-    
+
     let taskComponents = [];
 
-    for (const [id, task] of tasks) {
+    for (const task of tasks) {
+        console.log(task.task_ID);
         taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)}/>)
     }
+
+    console.log(taskComponents);
 
     return (
         <div>
@@ -89,10 +99,19 @@ function TaskList() {
                 </div>
                 <div>
                     <p>Order by:</p>
-                    <button className='tasklist-menu-button'>Due Date</button>
+                    <button className='tasklist-menu-button' onClick={() => {
+                        const sorted = [...tasks].sort(compareDueDate);
+                        setTasks(sorted);
+                    }}>Due Date</button>
                     <button className='tasklist-menu-button'>Work Date</button>
-                    <button className='tasklist-menu-button'>Category</button>
-                    <button className='tasklist-menu-button'>Incomplete</button>
+                    <button className='tasklist-menu-button' onClick={() => {
+                        const sorted = [...tasks].sort(compareCategory);
+                        setTasks(sorted);
+                    }}>Category</button>
+                    <button className='tasklist-menu-button' onClick={() => {
+                        const sorted = [...tasks].sort(compareComplete);
+                        setTasks(sorted);
+                    }}>Incomplete</button>
                 </div>
             </div>
             <div className='tasklist-items-container'>
