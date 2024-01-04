@@ -27,7 +27,7 @@ function TaskItem({t, c}) {
     return (
         <div className='task-container' style={borderStyle}>
             <p><b>{t.title}</b> - {c.name}</p>
-            <p>{due_time}</p>
+            {due_time}
             <br></br>
             <p>{t.description}</p>
             <br></br>

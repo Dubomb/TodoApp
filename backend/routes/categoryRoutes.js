@@ -16,7 +16,7 @@ module.exports = function(expressApp) {
     expressApp.post('/api/categories', (req, res) => {
         const query = 'insert into category (category_ID, name, color) values (?, ?, ?)';
         const data = req.body;
-        const params = [data.category_ID, data.name];
+        const params = [data.category_ID, data.name, data.color];
         
         const connection = expressApp.get('connection');
         connection.query(query, params, (err) => {

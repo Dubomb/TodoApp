@@ -1,6 +1,7 @@
-import TaskItem from "./taskitem";
-
 import { useEffect, useState } from 'react';
+
+import TaskItem from "./taskitem";
+import CategoryModal from './categorymodal';
 
 async function getTasks() {
     try {
@@ -36,6 +37,25 @@ async function getCategories() {
     }
 }
 
+async function createCategory(category) {
+    try {
+        const response = await fetch('http://localhost:3001/api/categories', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(category),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error creating category.' + err.message);
+        return false;
+    }
+}
+
 function compareDueDate(a, b) {
     return new Date(b.due_date) - new Date(a.due_date);
 }
@@ -53,6 +73,9 @@ function TaskList() {
     const [categoriesStatus, setCategoriesStatus] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState(new Map());
+    const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    const [taskModalOpen, setTaskModalOpen] = useState(false);
+    const [currentModal, setCurrentModal] = useState();
 
     useEffect(() => {
         getTasks().then(result => {
@@ -73,6 +96,23 @@ function TaskList() {
         });
     }, []);
 
+    const onCreateCategorySubmit = (async (event) => {
+        const categoryID = Math.floor(Math.random() * 2**31);
+        const categoryName = event.target[0].value;
+        const categoryColor = event.target[1].value;
+        setCategoryModalOpen(false);
+        const success = await createCategory({category_ID: categoryID, name: categoryName, color: categoryColor});
+    });
+
+    const onCreateCategoryCancel = (() => {
+        setCategoryModalOpen(false);
+    });
+
+    const openCategoryModal = ((c) => {
+        setCategoryModalOpen(true);
+        setCurrentModal(<CategoryModal c={c} onSubmit={onCreateCategorySubmit} onCancel={onCreateCategoryCancel}/>);
+    });
+
     if (!tasksStatus || !categoriesStatus) {
         return (
             <p>Loading task data...</p>
@@ -82,20 +122,18 @@ function TaskList() {
     let taskComponents = [];
 
     for (const task of tasks) {
-        console.log(task.task_ID);
         taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)}/>)
     }
 
-    console.log(taskComponents);
-
     return (
         <div>
+            {categoryModalOpen && currentModal}
             <div className='tasklist-menu-container'>
                 <h2>Tasks:</h2>
                 <div>
                     <p>Create new:</p>
                     <button className='tasklist-menu-button'>Task</button>
-                    <button className='tasklist-menu-button'>Category</button>
+                    <button onClick={() => openCategoryModal(undefined)} className='tasklist-menu-button'>Category</button>
                 </div>
                 <div>
                     <p>Order by:</p>
