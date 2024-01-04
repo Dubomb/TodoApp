@@ -138,8 +138,9 @@ function TaskList() {
         const taskTitle = event.target[0].value;
         const taskDescription = event.target[1].value;
         const taskDueDate = event.target[2].value;
+        const taskCategory = event.target[3].value;
         setTaskModalOpen(false);
-        const success = await createTask({task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: 0});
+        const success = await createTask({task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: taskCategory});
     });
 
     const onCreateTaskCancel = (() => {
@@ -148,7 +149,7 @@ function TaskList() {
 
     const openTaskModal = ((t) => {
         setTaskModalOpen(true);
-        setCurrentModal(<TaskModal t={t} onSubmit={onCreateTaskSubmit} onCancel={onCreateTaskCancel}/>);
+        setCurrentModal(<TaskModal t={t} c={categories} onSubmit={onCreateTaskSubmit} onCancel={onCreateTaskCancel}/>);
     });
 
     if (!tasksStatus || !categoriesStatus) {
