@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import TaskItem from "./taskitem";
 import CategoryModal from './categorymodal';
+import TaskModal from './taskmodal';
 
 async function getTasks() {
     try {
@@ -45,6 +46,25 @@ async function createCategory(category) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(category),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error creating category.' + err.message);
+        return false;
+    }
+}
+
+async function createTask(task) {
+    try {
+        const response = await fetch('http://localhost:3001/api/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(task),
         });
 
         const result = await response.json();
@@ -113,6 +133,24 @@ function TaskList() {
         setCurrentModal(<CategoryModal c={c} onSubmit={onCreateCategorySubmit} onCancel={onCreateCategoryCancel}/>);
     });
 
+    const onCreateTaskSubmit = (async (event) => {
+        const taskID = Math.floor(Math.random() * 2**31);
+        const taskTitle = event.target[0].value;
+        const taskDescription = event.target[1].value;
+        const taskDueDate = event.target[2].value;
+        setTaskModalOpen(false);
+        const success = await createTask({task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: 0});
+    });
+
+    const onCreateTaskCancel = (() => {
+        setTaskModalOpen(false);
+    });
+
+    const openTaskModal = ((t) => {
+        setTaskModalOpen(true);
+        setCurrentModal(<TaskModal t={t} onSubmit={onCreateTaskSubmit} onCancel={onCreateTaskCancel}/>);
+    });
+
     if (!tasksStatus || !categoriesStatus) {
         return (
             <p>Loading task data...</p>
@@ -127,12 +165,12 @@ function TaskList() {
 
     return (
         <div>
-            {categoryModalOpen && currentModal}
+            {(categoryModalOpen || taskModalOpen) && currentModal}
             <div className='tasklist-menu-container'>
                 <h2>Tasks:</h2>
                 <div>
                     <p>Create new:</p>
-                    <button className='tasklist-menu-button'>Task</button>
+                    <button onClick={() => openTaskModal(undefined)} className='tasklist-menu-button'>Task</button>
                     <button onClick={() => openCategoryModal(undefined)} className='tasklist-menu-button'>Category</button>
                 </div>
                 <div>
