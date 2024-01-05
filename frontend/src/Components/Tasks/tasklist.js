@@ -223,6 +223,20 @@ function TaskList() {
         setTaskModalOpen(false);
     });
 
+    const onCompleteTask = (async (task) => {
+        const completedTask = {...task, due_date: new Date(task.due_date).toISOString().slice(0, -5), complete: true};
+
+        const success = await editTask(completedTask);
+
+        if (success) {
+            const updated = tasks.map((item) => 
+                item.task_ID === task.task_ID ? {...task, complete: true} : item 
+            );
+
+            setTasks(updated);
+        }
+    });
+
     const onEditTask = (async (task) => {
         openTaskModal(task);
     });
@@ -250,7 +264,7 @@ function TaskList() {
     let taskComponents = [];
 
     for (const task of tasks) {
-        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onDelete={onDeleteTask} onEdit={onEditTask}/>)
+        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onComplete={onCompleteTask} onDelete={onDeleteTask} onEdit={onEditTask}/>)
     }
 
     return (
