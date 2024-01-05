@@ -120,8 +120,17 @@ function TaskList() {
         const categoryID = Math.floor(Math.random() * 2**31);
         const categoryName = event.target[0].value;
         const categoryColor = event.target[1].value;
+        const category = {category_ID: categoryID, name: categoryName, color: categoryColor};
+        const success = await createCategory(category);
+
+        if (success) {
+            const updated = categories;
+            const {category_ID, ...values} = category;
+            updated.set(category_ID, values);
+            setCategories(updated);
+        }
+
         setCategoryModalOpen(false);
-        const success = await createCategory({category_ID: categoryID, name: categoryName, color: categoryColor});
     });
 
     const onCreateCategoryCancel = (() => {
@@ -138,9 +147,17 @@ function TaskList() {
         const taskTitle = event.target[0].value;
         const taskDescription = event.target[1].value;
         const taskDueDate = event.target[2].value;
-        const taskCategory = event.target[3].value;
+        const taskCategory = parseInt(event.target[3].value);
+        const task = {task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: taskCategory};
+        
+        const success = await createTask(task);
+
+        if (success) {
+            const updated = [task, ...tasks];
+            setTasks(updated);
+        }
+
         setTaskModalOpen(false);
-        const success = await createTask({task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: taskCategory});
     });
 
     const onCreateTaskCancel = (() => {

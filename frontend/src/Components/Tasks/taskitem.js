@@ -12,6 +12,10 @@ function calculateDueTime(milliseconds) {
 }
 
 function TaskItem({t, c}) {
+    if (c === undefined) {
+        return <p>{t.category_ID}</p>;
+    }
+
     const borderStyle = {
         '--accent-color': c.color
     };
