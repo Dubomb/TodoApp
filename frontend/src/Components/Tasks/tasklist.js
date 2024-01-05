@@ -71,7 +71,26 @@ async function createTask(task) {
 
         return result.success;
     } catch (err) {
-        console.log('Error creating category.' + err.message);
+        console.log('Error creating task.' + err.message);
+        return false;
+    }
+}
+
+async function deleteTask(task) {
+    try {
+        const response = await fetch('http://localhost:3001/api/tasks', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(task),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error deleting task.' + err.message);
         return false;
     }
 }
@@ -164,6 +183,15 @@ function TaskList() {
         setTaskModalOpen(false);
     });
 
+    const onDeleteTask = (async (task) => {
+        const success = await deleteTask(task);
+
+        if (success) {
+            const [task, ...updated] = tasks;
+            setTasks(updated);
+        }
+    });
+
     const openTaskModal = ((t) => {
         setTaskModalOpen(true);
         setCurrentModal(<TaskModal t={t} c={categories} onSubmit={onCreateTaskSubmit} onCancel={onCreateTaskCancel}/>);
@@ -178,7 +206,7 @@ function TaskList() {
     let taskComponents = [];
 
     for (const task of tasks) {
-        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)}/>)
+        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onDelete={onDeleteTask}/>)
     }
 
     return (
