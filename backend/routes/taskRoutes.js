@@ -14,9 +14,9 @@ module.exports = function(expressApp) {
     });
     
     expressApp.post('/api/tasks', (req, res) => {
-        const query = 'insert into task (task_ID, title, description, due_date, status_ID, category_ID) values (?, ?, ?, ?, ?, ?)';
+        const query = 'insert into task (task_ID, title, description, due_date, complete, category_ID) values (?, ?, ?, ?, ?, ?)';
         const data = req.body;
-        const params = [data.task_ID, data.title, data.description, data.due_date, data.status_ID, data.category_ID];
+        const params = [data.task_ID, data.title, data.description, data.due_date, data.complete, data.category_ID];
         
         const connection = expressApp.get('connection');
         connection.query(query, params, (err) => {
@@ -31,9 +31,9 @@ module.exports = function(expressApp) {
     });
     
     expressApp.put('/api/tasks', (req, res) => {
-        const query = 'update task set title = ?, description = ?, due_date = ?, status_ID = ?, category_ID = ? where task_ID = ?';
+        const query = 'update task set title = ?, description = ?, due_date = ?, complete = ?, category_ID = ? where task_ID = ?';
         const data = req.body;
-        const params = [data.title, data.description, data.due_date, data.status_ID, data.category_ID, data.task_ID];
+        const params = [data.title, data.description, data.due_date, data.complete, data.category_ID, data.task_ID];
     
         const connection = expressApp.get('connection');
         connection.query(query, params, (err) => {

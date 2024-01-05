@@ -148,7 +148,7 @@ function TaskList() {
         const taskDescription = event.target[1].value;
         const taskDueDate = event.target[2].value;
         const taskCategory = parseInt(event.target[3].value);
-        const task = {task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, status_ID: 0, category_ID: taskCategory};
+        const task = {task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, complete: 0, category_ID: taskCategory};
         
         const success = await createTask(task);
 

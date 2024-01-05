@@ -32,14 +32,13 @@ CREATE TABLE task (
   `title` varchar(32) NOT NULL,
   `description` tinytext,
   `due_date` datetime(3) NOT NULL,
-  `status_ID` int unsigned NOT NULL,
+  `complete` tinyint NOT NULL,
   `category_ID` int unsigned NOT NULL,
   PRIMARY KEY (`task_ID`),
   UNIQUE KEY `task_ID_UNIQUE` (`task_ID`),
-  KEY `status_ID_idx` (`status_ID`),
+  KEY `status_ID_idx` (`complete`),
   KEY `category_ID_idx` (`category_ID`),
-  CONSTRAINT `category_ID` FOREIGN KEY (`category_ID`) REFERENCES `category` (`category_ID`),
-  CONSTRAINT `status_ID` FOREIGN KEY (`status_ID`) REFERENCES `status` (`status_ID`)
+  CONSTRAINT `category_ID` FOREIGN KEY (`category_ID`) REFERENCES `category` (`category_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE task_day (
