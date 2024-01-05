@@ -76,6 +76,25 @@ async function createTask(task) {
     }
 }
 
+async function editTask(task) {
+    try {
+        const response = await fetch('http://localhost:3001/api/tasks', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(task),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error editing task.' + err.message);
+        return false;
+    }
+}
+
 async function deleteTask(task) {
     try {
         const response = await fetch('http://localhost:3001/api/tasks', {
@@ -179,8 +198,33 @@ function TaskList() {
         setTaskModalOpen(false);
     });
 
-    const onCreateTaskCancel = (() => {
+    const onEditTaskSubmit = (async (event, t) => {
+        const taskTitle = event.target[0].value;
+        const taskDescription = event.target[1].value;
+        const taskDueDate = event.target[2].value;
+        const taskCategory = parseInt(event.target[3].value);
+
+        const newTask = {...t, title: taskTitle, description: taskDescription, due_date: taskDueDate, category_ID: taskCategory};
+
+        const success = await editTask(newTask);
+
+        if (success) {
+            const updated = tasks.map((task) => 
+                task.task_ID === newTask.task_ID ? newTask : task
+            );
+    
+            setTasks(updated);
+        }
+
         setTaskModalOpen(false);
+    });
+
+    const onTaskModalCancel = (() => {
+        setTaskModalOpen(false);
+    });
+
+    const onEditTask = (async (task) => {
+        openTaskModal(task);
     });
 
     const onDeleteTask = (async (task) => {
@@ -194,7 +238,7 @@ function TaskList() {
 
     const openTaskModal = ((t) => {
         setTaskModalOpen(true);
-        setCurrentModal(<TaskModal t={t} c={categories} onSubmit={onCreateTaskSubmit} onCancel={onCreateTaskCancel}/>);
+        setCurrentModal(<TaskModal t={t} c={categories} onSubmit={t === undefined ? onCreateTaskSubmit : onEditTaskSubmit} onCancel={onTaskModalCancel}/>);
     });
 
     if (!tasksStatus || !categoriesStatus) {
@@ -206,7 +250,7 @@ function TaskList() {
     let taskComponents = [];
 
     for (const task of tasks) {
-        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onDelete={onDeleteTask}/>)
+        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onDelete={onDeleteTask} onEdit={onEditTask}/>)
     }
 
     return (

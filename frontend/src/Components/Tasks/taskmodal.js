@@ -5,9 +5,9 @@ function TaskModal({t, c, onSubmit, onCancel}) {
     let currentCategory = undefined;
 
     if (t !== undefined) {
-        currentTitle = t.name;
-        currentDescription = t.color;
-        currentDueDate = t.due_date;
+        currentTitle = t.title;
+        currentDescription = t.description;
+        currentDueDate = new Date(t.due_date).toISOString().slice(0, -5);
         currentCategory = t.category_ID;
     }
 
@@ -20,13 +20,13 @@ function TaskModal({t, c, onSubmit, onCancel}) {
     return (
         <div className='modal-container'>
             <dialog open className='modal-form'>
-                <form method='dialog' onSubmit={onSubmit.bind(this)}>
+                <form method='dialog' onSubmit={(event) => onSubmit(event, t)}>
                     <label htmlFor='title'>Title:</label><br></br>
                     <input type='text' id='title' name='title' defaultValue={currentTitle}></input><br></br>
                     <label>Description:</label><br></br>
                     <textarea defaultValue={currentDescription} rows={6} cols={60}></textarea><br></br>
                     <label htmlFor='duedate'>Due Date:</label><br></br>
-                    <input type='datetime-local' id='duedate' name='duedate'></input><br></br>
+                    <input type='datetime-local' id='duedate' name='duedate' defaultValue={currentDueDate}></input><br></br>
                     <label htmlFor='category'>Category:</label><br></br>
                     <select id='category' name='category' defaultValue={currentCategory}>
                         {categoryOptions}

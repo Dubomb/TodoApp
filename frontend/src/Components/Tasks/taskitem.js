@@ -11,7 +11,7 @@ function calculateDueTime(milliseconds) {
     }
 }
 
-function TaskItem({t, c, onDelete}) {
+function TaskItem({t, c, onDelete, onEdit}) {
     if (c === undefined) {
         return <p>{t.category_ID}</p>;
     }
@@ -37,6 +37,7 @@ function TaskItem({t, c, onDelete}) {
             <br></br>
             <p>{t.complete ? 'Complete' : 'Incomplete'}</p>
             <br></br>
+            <button onClick={() => onEdit(t)} className='tasklist-menu-button'>Edit</button>
             <button onClick={() => onDelete(t)} className='tasklist-menu-button'>Delete</button>
         </div>
     );
