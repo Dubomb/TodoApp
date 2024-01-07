@@ -44,6 +44,13 @@ textarea {
     align-items: center;
 }
 
+.empty-tasklist-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 160px;
+}
+
 .tasklist-menu-container {
     background-color: #e1e2ea;
     padding: 30px;

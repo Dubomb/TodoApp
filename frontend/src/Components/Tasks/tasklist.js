@@ -263,9 +263,12 @@ function TaskList() {
 
     let taskComponents = [];
 
-    for (const task of tasks) {
-        taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onComplete={onCompleteTask} onDelete={onDeleteTask} onEdit={onEditTask}/>)
+    if (tasks.length !== 0) {
+        for (const task of tasks) {
+            taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onComplete={onCompleteTask} onDelete={onDeleteTask} onEdit={onEditTask}/>)
+        }
     }
+
 
     return (
         <div>
@@ -294,9 +297,14 @@ function TaskList() {
                     }}>Incomplete</button>
                 </div>
             </div>
+            {tasks.length === 0 ? 
+            <div className='empty-tasklist-container'>
+                <p>Create a new task to get started.</p>
+            </div> : 
             <div className='tasklist-items-container'>
                 {taskComponents}
-            </div>
+            </div>}
+
         </div>
     );
 }
