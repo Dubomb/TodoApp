@@ -37,7 +37,7 @@ function TaskItem({t, c, onComplete, onDelete, onEdit}) {
             <br></br>
             <p>{t.complete ? 'Complete' : 'Incomplete'}</p>
             <br></br>
-            <button onClick={() => onComplete(t)} className='tasklist-menu-button'>Complete</button>
+            {!t.complete && <button onClick={() => onComplete(t)} className='tasklist-menu-button'>Complete</button>}
             <button onClick={() => onEdit(t)} className='tasklist-menu-button'>Edit</button>
             <button onClick={() => onDelete(t)} className='tasklist-menu-button'>Delete</button>
         </div>
