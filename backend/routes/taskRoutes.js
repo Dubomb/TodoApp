@@ -64,6 +64,29 @@ module.exports = function(expressApp) {
         });
     });
 
+    expressApp.get('/api/tasks/:categoryID', (req, res) => {
+        const query = 'select * from task where category_ID = ?';
+        const data = parseInt(req.params.categoryID);
+
+        if (isNaN(data)) {
+            res.json({success: false, message: 'Please supply a valid number.'});
+            return;
+        }
+
+        const params = [data];
+
+        const connection = expressApp.get('connection');
+        connection.query(query, params, (err, results) => {
+            if (err) { 
+                console.log('Error: ' + err.message);
+                res.status(500).json({success: false, message: 'Failed to retrieve database information.'});
+                return;
+            }
+            
+            res.json({success: true, message: results});
+        });
+    });
+
     expressApp.get('/api/tasks/days', (req, res) => {
         const connection = expressApp.get('connection');
         connection.query('select * from task_day', (err, results) => {

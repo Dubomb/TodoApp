@@ -34,6 +34,23 @@ async function getCategories() {
         return result.message;
         
     } catch (err) {
+        console.log('Error when fetching categories: ' + err.message);
+        return [];
+    }
+}
+
+async function getTasksWithCategory(categoryID) {
+    try {
+        const response = await fetch('http://localhost:3001/api/tasks/' + categoryID);
+    
+        if (!response.ok) {
+            return [];
+        }
+    
+        const result = await response.json();
+        return result.message;
+        
+    } catch (err) {
         console.log('Error when fetching tasks: ' + err.message);
         return [];
     }
@@ -318,6 +335,12 @@ function TaskList() {
     });
 
     const onDeleteCategory = (async (id) => {
+        const data = await getTasksWithCategory(id);
+
+        if (data.length !== 0) {
+            return;
+        }
+
         const categoryID = parseInt(id);
         const categoryData = categories.get(categoryID);
         const category = {category_ID: categoryID, name: categoryData.name, color: categoryData.color};
