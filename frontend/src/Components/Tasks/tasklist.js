@@ -5,170 +5,7 @@ import CategoryModal from './categorymodal';
 import EditCategoryModal from './editcategorymodal'
 import TaskModal from './taskmodal';
 
-async function getTasks() {
-    try {
-        const response = await fetch('http://localhost:3001/api/tasks');
-    
-        if (!response.ok) {
-            return [];
-        }
-    
-        const result = await response.json();
-        return result.message;
-        
-    } catch (err) {
-        console.log('Error when fetching tasks: ' + err.message);
-        return [];
-    }
-}
-
-async function getCategories() {
-    try {
-        const response = await fetch('http://localhost:3001/api/categories');
-    
-        if (!response.ok) {
-            return [];
-        }
-    
-        const result = await response.json();
-        return result.message;
-        
-    } catch (err) {
-        console.log('Error when fetching categories: ' + err.message);
-        return [];
-    }
-}
-
-async function getTasksWithCategory(categoryID) {
-    try {
-        const response = await fetch('http://localhost:3001/api/tasks/' + categoryID);
-    
-        if (!response.ok) {
-            return [];
-        }
-    
-        const result = await response.json();
-        return result.message;
-        
-    } catch (err) {
-        console.log('Error when fetching tasks: ' + err.message);
-        return [];
-    }
-}
-
-async function createCategory(category) {
-    try {
-        const response = await fetch('http://localhost:3001/api/categories', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(category),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error creating category.' + err.message);
-        return false;
-    }
-}
-
-async function editCategory(category) {
-    try {
-        const response = await fetch('http://localhost:3001/api/categories', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(category),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error editing category.' + err.message);
-        return false;
-    }
-}
-
-async function deleteCategory(category) {
-    try {
-        const response = await fetch('http://localhost:3001/api/categories', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(category),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error creating category.' + err.message);
-        return false;
-    }
-}
-
-async function createTask(task) {
-    try {
-        const response = await fetch('http://localhost:3001/api/tasks', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(task),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error creating task.' + err.message);
-        return false;
-    }
-}
-
-async function editTask(task) {
-    try {
-        const response = await fetch('http://localhost:3001/api/tasks', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(task),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error editing task.' + err.message);
-        return false;
-    }
-}
-
-async function deleteTask(task) {
-    try {
-        const response = await fetch('http://localhost:3001/api/tasks', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(task),
-        });
-
-        const result = await response.json();
-
-        return result.success;
-    } catch (err) {
-        console.log('Error deleting task.' + err.message);
-        return false;
-    }
-}
+const fetchFunctions = require('../../Backend/fetchdata.js');
 
 function compareDueDate(a, b) {
     return new Date(a.due_date) - new Date(b.due_date);
@@ -188,19 +25,20 @@ function TaskList() {
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState(new Map());
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
-    let selectedCategory = undefined;
     const [taskModalOpen, setTaskModalOpen] = useState(false);
     const [currentModal, setCurrentModal] = useState();
 
+    let selectedCategory = undefined;
+
     useEffect(() => {
-        getTasks().then(result => {
+        fetchFunctions.getTasks().then(result => {
             setTasks(result);
             setTasksStatus(true);
         });
     }, []);
 
     useEffect(() => {
-        getCategories().then(result => {
+        fetchFunctions.getCategories().then(result => {
             let m = new Map();
             for (const item of result) {
                 const {category_ID, ...val} = item;
@@ -216,7 +54,7 @@ function TaskList() {
         const categoryName = event.target[0].value;
         const categoryColor = event.target[1].value;
         const category = {category_ID: categoryID, name: categoryName, color: categoryColor};
-        const success = await createCategory(category);
+        const success = await fetchFunctions.createCategory(category);
 
         if (success) {
             const updated = categories;
@@ -233,7 +71,7 @@ function TaskList() {
         const categoryName = event.target[0].value;
         const categoryColor = event.target[1].value;
         const newCategory = {category_ID: categoryID, name: categoryName, color: categoryColor};
-        const success = await editCategory(newCategory);
+        const success = await fetchFunctions.editCategory(newCategory);
 
         if (success) {
             let updated = categories;
@@ -245,14 +83,46 @@ function TaskList() {
         setCategoryModalOpen(false);
     });
 
+    const onDeleteCategory = (async (id) => {
+        const data = await fetchFunctions.getTasksWithCategory(id);
+
+        if (data.length !== 0) {
+            return;
+        }
+
+        const categoryID = parseInt(id);
+        const categoryData = categories.get(categoryID);
+        const category = {category_ID: categoryID, name: categoryData.name, color: categoryData.color};
+        const success = await fetchFunctions.deleteCategory(category);
+
+        if (success) {
+            let updated = categories;
+            categories.delete(categoryID);
+            setCategories(updated);
+        }
+
+        setCategoryModalOpen(false);
+    });
+
     const onCategoryModalCancel = (() => {
         setCategoryModalOpen(false);
+    });
+
+    const onEditCategory = ((event, id) => {
+        selectedCategory = parseInt(id, 10);
+        openCategoryModal(categories.get(selectedCategory));
     });
 
     const openCategoryModal = ((c) => {
         setCategoryModalOpen(true);
         setCurrentModal(<CategoryModal c={c} onSubmit={c === undefined ? onCreateCategorySubmit : onEditCategorySubmit} onCancel={onCategoryModalCancel}/>);
     });
+
+    const openEditCategoryModal = (() => {
+        setCategoryModalOpen(true);
+        setCurrentModal(<EditCategoryModal c={categories} onSubmit={(event, id) => onEditCategory(event, id)} onCancel={onCategoryModalCancel} onDelete={(id) => onDeleteCategory(id)}/>)
+    });
+
 
     const onCreateTaskSubmit = (async (event) => {
         const taskID = Math.floor(Math.random() * 2**31);
@@ -262,7 +132,7 @@ function TaskList() {
         const taskCategory = parseInt(event.target[3].value);
         const task = {task_ID: taskID, title: taskTitle, description: taskDescription, due_date: taskDueDate, complete: 0, category_ID: taskCategory};
         
-        const success = await createTask(task);
+        const success = await fetchFunctions.createTask(task);
 
         if (success) {
             const updated = [task, ...tasks];
@@ -280,7 +150,7 @@ function TaskList() {
 
         const newTask = {...t, title: taskTitle, description: taskDescription, due_date: taskDueDate, category_ID: taskCategory};
 
-        const success = await editTask(newTask);
+        const success = await fetchFunctions.editTask(newTask);
 
         if (success) {
             const updated = tasks.map((task) => 
@@ -293,14 +163,10 @@ function TaskList() {
         setTaskModalOpen(false);
     });
 
-    const onTaskModalCancel = (() => {
-        setTaskModalOpen(false);
-    });
-
     const onCompleteTask = (async (task) => {
         const completedTask = {...task, due_date: new Date(task.due_date).toISOString().slice(0, -5), complete: true};
 
-        const success = await editTask(completedTask);
+        const success = await fetchFunctions.editTask(completedTask);
 
         if (success) {
             const updated = tasks.map((item) => 
@@ -311,12 +177,12 @@ function TaskList() {
         }
     });
 
-    const onEditTask = (async (task) => {
-        openTaskModal(task);
+    const onTaskModalCancel = (() => {
+        setTaskModalOpen(false);
     });
 
     const onDeleteTask = (async (task) => {
-        const success = await deleteTask(task);
+        const success = await fetchFunctions.deleteTask(task);
 
         if (success) {
             const [task, ...updated] = tasks;
@@ -329,42 +195,17 @@ function TaskList() {
         setCurrentModal(<TaskModal t={t} c={categories} onSubmit={t === undefined ? onCreateTaskSubmit : onEditTaskSubmit} onCancel={onTaskModalCancel}/>);
     });
 
-    const onEditCategory = ((event, id) => {
-        selectedCategory = parseInt(id, 10);
-        openCategoryModal(categories.get(selectedCategory));
+    const onEditTask = (async (task) => {
+        openTaskModal(task);
     });
 
-    const onDeleteCategory = (async (id) => {
-        const data = await getTasksWithCategory(id);
-
-        if (data.length !== 0) {
-            return;
-        }
-
-        const categoryID = parseInt(id);
-        const categoryData = categories.get(categoryID);
-        const category = {category_ID: categoryID, name: categoryData.name, color: categoryData.color};
-        const success = await deleteCategory(category);
-
-        if (success) {
-            let updated = categories;
-            categories.delete(categoryID);
-            setCategories(updated);
-        }
-
-        setCategoryModalOpen(false);
-    });
-
-    const openEditCategoryModal = (() => {
-        setCategoryModalOpen(true);
-        setCurrentModal(<EditCategoryModal c={categories} onSubmit={(event, id) => onEditCategory(event, id)} onCancel={onCategoryModalCancel} onDelete={(id) => onDeleteCategory(id)}/>)
-    });
 
     if (!tasksStatus || !categoriesStatus) {
         return (
             <p>Loading task data...</p>
         );
     }
+
 
     let taskComponents = [];
 
