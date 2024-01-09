@@ -104,23 +104,16 @@ function TaskList() {
         setCategoryModalOpen(false);
     });
 
-    const onCategoryModalCancel = (() => {
-        setCategoryModalOpen(false);
-    });
-
-    const onEditCategory = ((event, id) => {
-        selectedCategory = parseInt(id, 10);
-        openCategoryModal(categories.get(selectedCategory));
-    });
-
     const openCategoryModal = ((c) => {
         setCategoryModalOpen(true);
-        setCurrentModal(<CategoryModal c={c} onSubmit={c === undefined ? onCreateCategorySubmit : onEditCategorySubmit} onCancel={onCategoryModalCancel}/>);
+        setCurrentModal(<CategoryModal c={c} onSubmit={c === undefined ? onCreateCategorySubmit : onEditCategorySubmit}
+                onCancel={() => setCategoryModalOpen(false)}/>);
     });
 
     const openEditCategoryModal = (() => {
         setCategoryModalOpen(true);
-        setCurrentModal(<EditCategoryModal c={categories} onSubmit={(event, id) => onEditCategory(event, id)} onCancel={onCategoryModalCancel} onDelete={(id) => onDeleteCategory(id)}/>)
+        setCurrentModal(<EditCategoryModal c={categories} onSubmit={(event, id) => openCategoryModal(categories.get(parseInt(id, 10)))}
+                onCancel={() => setCategoryModalOpen(false)} onDelete={(id) => onDeleteCategory(id)}/>)
     });
 
 
@@ -177,10 +170,6 @@ function TaskList() {
         }
     });
 
-    const onTaskModalCancel = (() => {
-        setTaskModalOpen(false);
-    });
-
     const onDeleteTask = (async (task) => {
         const success = await fetchFunctions.deleteTask(task);
 
@@ -192,18 +181,13 @@ function TaskList() {
 
     const openTaskModal = ((t) => {
         setTaskModalOpen(true);
-        setCurrentModal(<TaskModal t={t} c={categories} onSubmit={t === undefined ? onCreateTaskSubmit : onEditTaskSubmit} onCancel={onTaskModalCancel}/>);
-    });
-
-    const onEditTask = (async (task) => {
-        openTaskModal(task);
+        setCurrentModal(<TaskModal t={t} c={categories} onSubmit={t === undefined ? onCreateTaskSubmit : onEditTaskSubmit}
+                onCancel={() => setTaskModalOpen(false)}/>);
     });
 
 
     if (!tasksStatus || !categoriesStatus) {
-        return (
-            <p>Loading task data...</p>
-        );
+        return <p>Loading task data...</p>;
     }
 
 
@@ -211,7 +195,7 @@ function TaskList() {
 
     if (tasks.length !== 0) {
         for (const task of tasks) {
-            taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onComplete={onCompleteTask} onDelete={onDeleteTask} onEdit={onEditTask}/>)
+            taskComponents.push(<TaskItem t={task} c={categories.get(task.category_ID)} onComplete={onCompleteTask} onDelete={onDeleteTask} onEdit={(task) => openTaskModal(task)}/>)
         }
     }
 
