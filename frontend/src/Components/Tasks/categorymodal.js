@@ -10,7 +10,7 @@ function CategoryModal({c, onSubmit, onCancel}) {
     return (
         <div className='modal-container'>
             <dialog open className='modal-form'>
-                <form method='dialog' onSubmit={onSubmit.bind(this)}>
+                <form method='dialog' onSubmit={onSubmit}>
                     <label htmlFor='name'>Name:</label><br></br>
                     <input type='text' id='name' name='name' defaultValue={currentName}></input><br></br>
                     <label>Color:</label><br></br>

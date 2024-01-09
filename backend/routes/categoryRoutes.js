@@ -33,7 +33,7 @@ module.exports = function(expressApp) {
     expressApp.put('/api/categories', (req, res) => {
         const query = 'update category set name = ?, color = ? where category_ID = ?';
         const data = req.body;
-        const params = [data.name, data.category_ID];
+        const params = [data.name, data.color, data.category_ID];
 
         const connection = expressApp.get('connection');
         connection.query(query, params, (err) => {
@@ -48,7 +48,7 @@ module.exports = function(expressApp) {
     });
 
     expressApp.delete('/api/categories', (req, res) => {
-        const query = 'delete from task where category_ID = ?';
+        const query = 'delete from category where category_ID = ?';
         const data = req.body;
         const params = [data.category_ID];
 

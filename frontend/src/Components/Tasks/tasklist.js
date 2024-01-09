@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import TaskItem from "./taskitem";
 import CategoryModal from './categorymodal';
+import EditCategoryModal from './editcategorymodal'
 import TaskModal from './taskmodal';
 
 async function getTasks() {
@@ -42,6 +43,44 @@ async function createCategory(category) {
     try {
         const response = await fetch('http://localhost:3001/api/categories', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(category),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error creating category.' + err.message);
+        return false;
+    }
+}
+
+async function editCategory(category) {
+    try {
+        const response = await fetch('http://localhost:3001/api/categories', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(category),
+        });
+
+        const result = await response.json();
+
+        return result.success;
+    } catch (err) {
+        console.log('Error editing category.' + err.message);
+        return false;
+    }
+}
+
+async function deleteCategory(category) {
+    try {
+        const response = await fetch('http://localhost:3001/api/categories', {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -132,6 +171,7 @@ function TaskList() {
     const [tasks, setTasks] = useState([]);
     const [categories, setCategories] = useState(new Map());
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    let selectedCategory = undefined;
     const [taskModalOpen, setTaskModalOpen] = useState(false);
     const [currentModal, setCurrentModal] = useState();
 
@@ -171,13 +211,30 @@ function TaskList() {
         setCategoryModalOpen(false);
     });
 
-    const onCreateCategoryCancel = (() => {
+    const onEditCategorySubmit = (async (event) => {
+        const categoryID = selectedCategory;
+        const categoryName = event.target[0].value;
+        const categoryColor = event.target[1].value;
+        const newCategory = {category_ID: categoryID, name: categoryName, color: categoryColor};
+        const success = await editCategory(newCategory);
+
+        if (success) {
+            let updated = categories;
+            const {category_ID, ...values} = newCategory;
+            updated.set(category_ID, values);
+            setCategories(updated);
+        }
+
+        setCategoryModalOpen(false);
+    });
+
+    const onCategoryModalCancel = (() => {
         setCategoryModalOpen(false);
     });
 
     const openCategoryModal = ((c) => {
         setCategoryModalOpen(true);
-        setCurrentModal(<CategoryModal c={c} onSubmit={onCreateCategorySubmit} onCancel={onCreateCategoryCancel}/>);
+        setCurrentModal(<CategoryModal c={c} onSubmit={c === undefined ? onCreateCategorySubmit : onEditCategorySubmit} onCancel={onCategoryModalCancel}/>);
     });
 
     const onCreateTaskSubmit = (async (event) => {
@@ -255,6 +312,31 @@ function TaskList() {
         setCurrentModal(<TaskModal t={t} c={categories} onSubmit={t === undefined ? onCreateTaskSubmit : onEditTaskSubmit} onCancel={onTaskModalCancel}/>);
     });
 
+    const onEditCategory = ((event, id) => {
+        selectedCategory = parseInt(id, 10);
+        openCategoryModal(categories.get(selectedCategory));
+    });
+
+    const onDeleteCategory = (async (id) => {
+        const categoryID = parseInt(id);
+        const categoryData = categories.get(categoryID);
+        const category = {category_ID: categoryID, name: categoryData.name, color: categoryData.color};
+        const success = await deleteCategory(category);
+
+        if (success) {
+            let updated = categories;
+            categories.delete(categoryID);
+            setCategories(updated);
+        }
+
+        setCategoryModalOpen(false);
+    });
+
+    const openEditCategoryModal = (() => {
+        setCategoryModalOpen(true);
+        setCurrentModal(<EditCategoryModal c={categories} onSubmit={(event, id) => onEditCategory(event, id)} onCancel={onCategoryModalCancel} onDelete={(id) => onDeleteCategory(id)}/>)
+    });
+
     if (!tasksStatus || !categoriesStatus) {
         return (
             <p>Loading task data...</p>
@@ -269,16 +351,18 @@ function TaskList() {
         }
     }
 
-
     return (
         <div>
             {(categoryModalOpen || taskModalOpen) && currentModal}
             <div className='tasklist-menu-container'>
-                <h2>Tasks:</h2>
                 <div>
                     <p>Create new:</p>
-                    <button onClick={() => openTaskModal(undefined)} className='tasklist-menu-button'>Task</button>
+                    <button onClick={() => openTaskModal(undefined)} className='tasklist-menu-button' disabled={categories.size === 0}>Task</button>
                     <button onClick={() => openCategoryModal(undefined)} className='tasklist-menu-button'>Category</button>
+                </div>
+                <div>
+                    <p>Edit:</p>
+                    <button onClick={openEditCategoryModal} className='tasklist-menu-button' disabled={categories.size === 0}>Category</button>
                 </div>
                 <div>
                     <p>Order by:</p>
