@@ -21,12 +21,12 @@ function TaskModal({t, c, onSubmit, onCancel}) {
         <div className='modal-container'>
             <dialog open className='modal-form'>
                 <form method='dialog' onSubmit={(event) => onSubmit(event, t)}>
-                    <label htmlFor='title'>Title:</label><br></br>
-                    <input type='text' id='title' name='title' defaultValue={currentTitle}></input><br></br>
+                    <label htmlFor='title'>Title: <span className='req-star'>*</span></label><br></br>
+                    <input type='text' id='title' name='title' defaultValue={currentTitle} required={true}></input><br></br>
                     <label>Description:</label><br></br>
                     <textarea defaultValue={currentDescription} rows={6} cols={60}></textarea><br></br>
-                    <label htmlFor='duedate'>Due Date:</label><br></br>
-                    <input type='datetime-local' id='duedate' name='duedate' defaultValue={currentDueDate}></input><br></br>
+                    <label htmlFor='duedate'>Due Date: <span className='req-star'>*</span></label><br></br>
+                    <input type='datetime-local' id='duedate' name='duedate' defaultValue={currentDueDate} required={true}></input><br></br>
                     <label htmlFor='category'>Category:</label><br></br>
                     <select id='category' name='category' defaultValue={currentCategory}>
                         {categoryOptions}
