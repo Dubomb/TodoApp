@@ -366,16 +366,16 @@ function TaskList() {
                 </div>
                 <div>
                     <p>Order by:</p>
-                    <button className='tasklist-menu-button' onClick={() => {
+                    <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareDueDate);
                         setTasks(sorted);
                     }}>Due Date</button>
-                    <button className='tasklist-menu-button'>Work Date</button>
-                    <button className='tasklist-menu-button' onClick={() => {
+                    <button className='tasklist-menu-button' disabled={tasks.length === 0}>Work Date</button>
+                    <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareCategory);
                         setTasks(sorted);
                     }}>Category</button>
-                    <button className='tasklist-menu-button' onClick={() => {
+                    <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareComplete);
                         setTasks(sorted);
                     }}>Incomplete</button>

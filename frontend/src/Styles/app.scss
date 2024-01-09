@@ -69,6 +69,10 @@ textarea {
         background-color: red;
     }
 
+    &:disabled {
+        background-color: #5f5f66;
+    }
+
     @include base-button();
     color: white;
     background-color: black;
