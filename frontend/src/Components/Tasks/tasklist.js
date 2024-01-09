@@ -154,7 +154,7 @@ async function deleteTask(task) {
 }
 
 function compareDueDate(a, b) {
-    return new Date(b.due_date) - new Date(a.due_date);
+    return new Date(a.due_date) - new Date(b.due_date);
 }
 
 function compareCategory(a, b) {
@@ -162,7 +162,7 @@ function compareCategory(a, b) {
 }
 
 function compareComplete(a, b) {
-    return a.status_ID - b.status_ID;
+    return a.complete - b.complete;
 }
 
 function TaskList() {
@@ -370,13 +370,13 @@ function TaskList() {
                         const sorted = [...tasks].sort(compareDueDate);
                         setTasks(sorted);
                     }}>Due Date</button>
-                    <button className='tasklist-menu-button' disabled={tasks.length === 0}>Work Date</button>
                     <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareCategory);
                         setTasks(sorted);
                     }}>Category</button>
                     <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareComplete);
+                        console.log(sorted);
                         setTasks(sorted);
                     }}>Incomplete</button>
                 </div>
