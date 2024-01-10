@@ -30,7 +30,7 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: 'pnapoli',
     password: pass,
-    database: 'todo'
+    database: 'todo',
 });
 
 

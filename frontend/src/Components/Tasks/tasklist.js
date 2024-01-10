@@ -32,6 +32,7 @@ function TaskList() {
 
     useEffect(() => {
         fetchFunctions.getTasks().then(result => {
+            console.log(result);
             setTasks(result);
             setTasksStatus(true);
         });
@@ -145,12 +146,16 @@ function TaskList() {
 
         const success = await fetchFunctions.editTask(newTask);
 
+        newTask.due_date += 'Z'
+
         if (success) {
             const updated = tasks.map((task) => 
                 task.task_ID === newTask.task_ID ? newTask : task
             );
     
             setTasks(updated);
+
+            console.log(updated);
         }
 
         setTaskModalOpen(false);
@@ -224,7 +229,6 @@ function TaskList() {
                     }}>Category</button>
                     <button className='tasklist-menu-button' disabled={tasks.length === 0} onClick={() => {
                         const sorted = [...tasks].sort(compareComplete);
-                        console.log(sorted);
                         setTasks(sorted);
                     }}>Incomplete</button>
                 </div>
