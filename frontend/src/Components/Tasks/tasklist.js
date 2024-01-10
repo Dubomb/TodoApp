@@ -32,7 +32,6 @@ function TaskList() {
 
     useEffect(() => {
         fetchFunctions.getTasks().then(result => {
-            console.log(result);
             setTasks(result);
             setTasksStatus(true);
         });
@@ -154,8 +153,6 @@ function TaskList() {
             );
     
             setTasks(updated);
-
-            console.log(updated);
         }
 
         setTaskModalOpen(false);

@@ -8,7 +8,6 @@ function TaskModal({t, c, onSubmit, onCancel}) {
         currentTitle = t.title;
         currentDescription = t.description;
         currentDueDate = new Date(t.due_date).toISOString().slice(0, -5);
-        console.log(currentDueDate);
         currentCategory = t.category_ID;
     }
 
