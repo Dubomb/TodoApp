@@ -20,7 +20,7 @@ function TaskItem({t, c, onComplete, onDelete, onEdit}) {
         '--accent-color': c.color
     };
 
-    const timeDifference = new Date(new Date(t.due_date).toISOString().slice(0, -5)) - new Date();
+    const timeDifference = new Date(t.due_date) - new Date();
     let due_time;
     if (timeDifference > 0) {
         due_time = <p>Due in {calculateDueTime(timeDifference)}</p>;

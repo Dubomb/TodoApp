@@ -145,8 +145,6 @@ function TaskList() {
 
         const success = await fetchFunctions.editTask(newTask);
 
-        newTask.due_date += 'Z'
-
         if (success) {
             const updated = tasks.map((task) => 
                 task.task_ID === newTask.task_ID ? newTask : task

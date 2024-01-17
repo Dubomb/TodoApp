@@ -7,7 +7,7 @@ function TaskModal({t, c, onSubmit, onCancel}) {
     if (t !== undefined) {
         currentTitle = t.title;
         currentDescription = t.description;
-        currentDueDate = new Date(t.due_date).toISOString().slice(0, -5);
+        currentDueDate = new Date(t.due_date + 'Z').toISOString().slice(0, -5);
         currentCategory = t.category_ID;
     }
 

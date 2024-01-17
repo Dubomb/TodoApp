@@ -31,6 +31,7 @@ const connection = mysql.createConnection({
     user: 'pnapoli',
     password: pass,
     database: 'todo',
+    dateStrings: true,
 });
 
 
